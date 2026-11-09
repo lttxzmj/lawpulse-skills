@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-delay-interest",
+  "name": "迟延履行加倍利息",
+  "kind": "calculator",
+  "summary": "按日万分之一点七五算加倍部分债务利息。",
+  "scene": [
+    "执行"
+  ],
+  "lawRefs": [
+    "最高人民法院关于执行程序中计算迟延履行期间的债务利息适用法律若干问题的解释-0001"
+  ],
+  "body": {
+    "explain": "加倍部分债务利息 = 尚未清偿的金钱债务（不含一般债务利息）× 日万分之一点七五 × 迟延履行期间。一般债务利息按生效法律文书确定的方法另算，不在本计算器内。",
+    "inputs": [
+      {
+        "name": "principal",
+        "label": "尚未清偿的金钱债务",
+        "type": "money",
+        "unit": "元",
+        "required": true,
+        "hint": "不含生效法律文书确定的一般债务利息"
+      },
+      {
+        "name": "days",
+        "label": "迟延履行天数",
+        "type": "integer",
+        "unit": "天",
+        "required": true
+      }
+    ],
+    "outputs": [
+      {
+        "name": "interest",
+        "label": "加倍部分债务利息",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "principal"
+              },
+              "right": {
+                "op": "num",
+                "value": 0.000175
+              }
+            },
+            "right": {
+              "op": "var",
+              "name": "days"
+            }
+          }
+        },
+        "explain": "债务本金 × 0.0175%/日 × 迟延天数，日万分之一点七五是司法解释第一条的固定值，不随 LPR 变动。"
+      }
+    ]
+  }
+}

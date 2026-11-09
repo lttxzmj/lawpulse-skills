@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-lpr-interest",
+  "name": "LPR 利息计算",
+  "kind": "calculator",
+  "summary": "按年利率与实际天数算利息，LPR 当期值由你填。",
+  "scene": [
+    "民商事"
+  ],
+  "lawRefs": [
+    "最高人民法院关于审理民间借贷案件适用法律若干问题的规定-0025"
+  ],
+  "body": {
+    "explain": "利息 = 本金 × 年利率 × 天数 ÷ 365。一年期贷款市场报价利率（LPR）每月 20 日由全国银行间同业拆借中心发布，是会变的数，所以由你填当期值，应用不内置。",
+    "inputs": [
+      {
+        "name": "principal",
+        "label": "本金",
+        "type": "money",
+        "unit": "元",
+        "required": true
+      },
+      {
+        "name": "annualRate",
+        "label": "年利率",
+        "type": "percent",
+        "unit": "%",
+        "required": true,
+        "hint": "填当期一年期 LPR 或合同约定利率，如 3.1"
+      },
+      {
+        "name": "days",
+        "label": "计息天数",
+        "type": "integer",
+        "unit": "天",
+        "required": true
+      }
+    ],
+    "outputs": [
+      {
+        "name": "interest",
+        "label": "利息",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "principal"
+              },
+              "right": {
+                "op": "div",
+                "left": {
+                  "op": "var",
+                  "name": "annualRate"
+                },
+                "right": {
+                  "op": "num",
+                  "value": 100
+                }
+              }
+            },
+            "right": {
+              "op": "div",
+              "left": {
+                "op": "var",
+                "name": "days"
+              },
+              "right": {
+                "op": "num",
+                "value": 365
+              }
+            }
+          }
+        },
+        "explain": "本金 × 年利率 ÷ 365 × 天数，按单利计。"
+      }
+    ]
+  }
+}

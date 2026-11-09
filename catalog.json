@@ -1,0 +1,190 @@
+{
+  "generatedAt": "2026-11-09",
+  "skills": [
+    {
+      "id": "calc-child-support",
+      "name": "抚养费计算",
+      "kind": "calculator",
+      "summary": "按月总收入比例给出抚养费参考区间。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "婚姻家庭"
+      ],
+      "path": "skills/calc-child-support/skill.json"
+    },
+    {
+      "id": "calc-court-fee",
+      "name": "诉讼费计算",
+      "kind": "calculator",
+      "summary": "按《诉讼费用交纳办法》算案件受理费，含财产、离婚、劳动争议。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事",
+        "婚姻家庭",
+        "劳动"
+      ],
+      "path": "skills/calc-court-fee/skill.json"
+    },
+    {
+      "id": "calc-delay-interest",
+      "name": "迟延履行加倍利息",
+      "kind": "calculator",
+      "summary": "按日万分之一点七五算加倍部分债务利息。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "执行"
+      ],
+      "path": "skills/calc-delay-interest/skill.json"
+    },
+    {
+      "id": "calc-execution-fee",
+      "name": "执行申请费计算",
+      "kind": "calculator",
+      "summary": "按执行金额算申请执行费，没有执行金额的为幅度收费。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "执行"
+      ],
+      "path": "skills/calc-execution-fee/skill.json"
+    },
+    {
+      "id": "calc-lawyer-fee",
+      "name": "律师费（风险代理与计时）",
+      "kind": "calculator",
+      "summary": "算计时收费总额与风险代理 30% 收费上限。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事",
+        "执业"
+      ],
+      "path": "skills/calc-lawyer-fee/skill.json"
+    },
+    {
+      "id": "calc-lpr-interest",
+      "name": "LPR 利息计算",
+      "kind": "calculator",
+      "summary": "按年利率与实际天数算利息，LPR 当期值由你填。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/calc-lpr-interest/skill.json"
+    },
+    {
+      "id": "calc-penalty-adjust",
+      "name": "违约金调整参考",
+      "kind": "calculator",
+      "summary": "按损失 130% 的参考线看约定违约金是否可能被认定过高。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/calc-penalty-adjust/skill.json"
+    },
+    {
+      "id": "calc-personal-injury",
+      "name": "人身损害赔偿计算",
+      "kind": "calculator",
+      "summary": "算残疾赔偿金、死亡赔偿金与丧葬费。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "侵权",
+        "交通事故"
+      ],
+      "path": "skills/calc-personal-injury/skill.json"
+    },
+    {
+      "id": "calc-preservation-fee",
+      "name": "保全费计算",
+      "kind": "calculator",
+      "summary": "按实际保全财产数额算申请费，封顶 5000 元。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/calc-preservation-fee/skill.json"
+    },
+    {
+      "id": "calc-private-lending-cap",
+      "name": "民间借贷利率上限",
+      "kind": "calculator",
+      "summary": "按合同成立时一年期 LPR 四倍算受保护的利息上限。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/calc-private-lending-cap/skill.json"
+    },
+    {
+      "id": "calc-work-injury",
+      "name": "工伤赔偿计算",
+      "kind": "calculator",
+      "summary": "按伤残等级算一次性伤残补助金与伤残津贴。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "劳动"
+      ],
+      "path": "skills/calc-work-injury/skill.json"
+    },
+    {
+      "id": "review-playbook-generic",
+      "name": "通用合同审查清单",
+      "kind": "playbook",
+      "summary": "通用合同的 10 条必查项，可编辑后导出分享。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/review-playbook-generic/skill.json"
+    },
+    {
+      "id": "review-playbook-labor",
+      "name": "劳动合同审查清单",
+      "kind": "playbook",
+      "summary": "劳动合同的 10 条必查项，可编辑后导出分享。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "劳动"
+      ],
+      "path": "skills/review-playbook-labor/skill.json"
+    },
+    {
+      "id": "review-playbook-lease",
+      "name": "房屋租赁合同审查清单",
+      "kind": "playbook",
+      "summary": "房屋租赁合同的 8 条必查项，可编辑后导出分享。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事",
+        "房地产"
+      ],
+      "path": "skills/review-playbook-lease/skill.json"
+    },
+    {
+      "id": "review-playbook-sales",
+      "name": "买卖合同审查清单",
+      "kind": "playbook",
+      "summary": "买卖合同的 7 条必查项，可编辑后导出分享。",
+      "version": "1.0.0",
+      "author": "official",
+      "scene": [
+        "民商事"
+      ],
+      "path": "skills/review-playbook-sales/skill.json"
+    }
+  ]
+}

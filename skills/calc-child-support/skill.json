@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-child-support",
+  "name": "抚养费计算",
+  "kind": "calculator",
+  "summary": "按月总收入比例给出抚养费参考区间。",
+  "scene": [
+    "婚姻家庭"
+  ],
+  "lawRefs": [
+    "最高人民法院关于适用《中华人民共和国民法典》婚姻家庭编的解释（一）-0049"
+  ],
+  "body": {
+    "explain": "有固定收入的，抚养费一般按月总收入的 20%–30% 给付；负担两个以上子女的，比例可以适当提高，但一般不得超过 50%。具体数额还要看子女实际需要、父母负担能力与当地生活水平，所以这里给的是参考区间。",
+    "inputs": [
+      {
+        "name": "monthlyIncome",
+        "label": "给付方月总收入",
+        "type": "money",
+        "unit": "元/月",
+        "required": true
+      },
+      {
+        "name": "childCount",
+        "label": "子女人数",
+        "type": "integer",
+        "required": true,
+        "default": 1
+      }
+    ],
+    "outputs": [
+      {
+        "name": "low",
+        "label": "月抚养费参考下限",
+        "unit": "元/月",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "var",
+              "name": "monthlyIncome"
+            },
+            "right": {
+              "op": "num",
+              "value": 0.2
+            }
+          }
+        },
+        "explain": "月总收入 × 20%。"
+      },
+      {
+        "name": "high",
+        "label": "月抚养费参考上限",
+        "unit": "元/月",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "cmp": "gte",
+              "left": {
+                "op": "var",
+                "name": "childCount"
+              },
+              "right": {
+                "op": "num",
+                "value": 2
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "monthlyIncome"
+              },
+              "right": {
+                "op": "num",
+                "value": 0.5
+              }
+            },
+            "else": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "monthlyIncome"
+              },
+              "right": {
+                "op": "num",
+                "value": 0.3
+              }
+            }
+          }
+        },
+        "explain": "一个子女按月总收入 × 30%；两个以上子女比例可适当提高，但一般不超过 50%。"
+      }
+    ]
+  }
+}

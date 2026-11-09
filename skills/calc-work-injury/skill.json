@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-work-injury",
+  "name": "工伤赔偿计算",
+  "kind": "calculator",
+  "summary": "按伤残等级算一次性伤残补助金与伤残津贴。",
+  "scene": [
+    "劳动"
+  ],
+  "lawRefs": [
+    "工伤保险条例-0035",
+    "工伤保险条例-0036",
+    "工伤保险条例-0037"
+  ],
+  "body": {
+    "explain": "一次性伤残补助金按本人工资的月数计（一级 27 个月递减至十级 7 个月）；一至六级另有按月伤残津贴。**一次性工伤医疗补助金与一次性伤残就业补助金的标准由省、自治区、直辖市规定**（第三十六、三十七条），各省不同，应用不内置。",
+    "inputs": [
+      {
+        "name": "level",
+        "label": "伤残等级",
+        "type": "enum",
+        "required": true,
+        "options": [
+          {
+            "value": "1",
+            "label": "一级"
+          },
+          {
+            "value": "2",
+            "label": "二级"
+          },
+          {
+            "value": "3",
+            "label": "三级"
+          },
+          {
+            "value": "4",
+            "label": "四级"
+          },
+          {
+            "value": "5",
+            "label": "五级"
+          },
+          {
+            "value": "6",
+            "label": "六级"
+          },
+          {
+            "value": "7",
+            "label": "七级"
+          },
+          {
+            "value": "8",
+            "label": "八级"
+          },
+          {
+            "value": "9",
+            "label": "九级"
+          },
+          {
+            "value": "10",
+            "label": "十级"
+          }
+        ]
+      },
+      {
+        "name": "wage",
+        "label": "本人工资",
+        "type": "money",
+        "unit": "元/月",
+        "required": true,
+        "hint": "受伤前 12 个月平均月缴费工资"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "subsidy",
+        "label": "一次性伤残补助金",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "table",
+              "key": {
+                "op": "var",
+                "name": "level"
+              },
+              "entries": [
+                {
+                  "match": "1",
+                  "value": 27
+                },
+                {
+                  "match": "2",
+                  "value": 25
+                },
+                {
+                  "match": "3",
+                  "value": 23
+                },
+                {
+                  "match": "4",
+                  "value": 21
+                },
+                {
+                  "match": "5",
+                  "value": 18
+                },
+                {
+                  "match": "6",
+                  "value": 16
+                },
+                {
+                  "match": "7",
+                  "value": 13
+                },
+                {
+                  "match": "8",
+                  "value": 11
+                },
+                {
+                  "match": "9",
+                  "value": 9
+                },
+                {
+                  "match": "10",
+                  "value": 7
+                }
+              ]
+            },
+            "right": {
+              "op": "var",
+              "name": "wage"
+            }
+          }
+        },
+        "explain": "本人工资 × 对应月数（第三十五至三十七条：一级 27、二级 25、三级 23、四级 21、五级 18、六级 16、七级 13、八级 11、九级 9、十级 7 个月）。"
+      },
+      {
+        "name": "allowance",
+        "label": "按月伤残津贴",
+        "unit": "元/月",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "table",
+              "key": {
+                "op": "var",
+                "name": "level"
+              },
+              "entries": [
+                {
+                  "match": "1",
+                  "value": 0.9
+                },
+                {
+                  "match": "2",
+                  "value": 0.85
+                },
+                {
+                  "match": "3",
+                  "value": 0.8
+                },
+                {
+                  "match": "4",
+                  "value": 0.75
+                },
+                {
+                  "match": "5",
+                  "value": 0.7
+                },
+                {
+                  "match": "6",
+                  "value": 0.6
+                }
+              ],
+              "fallback": 0
+            },
+            "right": {
+              "op": "var",
+              "name": "wage"
+            }
+          }
+        },
+        "explain": "一至四级从工伤保险基金按月支付（90%/85%/80%/75%），五、六级难以安排工作的由用人单位按月发（70%/60%）；七至十级没有伤残津贴，这里为 0。低于当地最低工资的要补足差额。"
+      }
+    ]
+  }
+}

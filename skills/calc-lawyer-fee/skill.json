@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-lawyer-fee",
+  "name": "律师费（风险代理与计时）",
+  "kind": "calculator",
+  "summary": "算计时收费总额与风险代理 30% 收费上限。",
+  "scene": [
+    "民商事",
+    "执业"
+  ],
+  "lawRefs": [
+    "律师服务收费管理办法-0013"
+  ],
+  "body": {
+    "explain": "风险代理最高收费金额不得高于收费合同约定标的额的 30%（《律师服务收费管理办法》第十三条）。**按标的额比例的政府指导价由各省价格主管部门另行制定，各省不同，应用不内置**——要用本省标准请查本省发改委（价格局）与司法厅的收费文件。",
+    "inputs": [
+      {
+        "name": "mode",
+        "label": "收费方式",
+        "type": "enum",
+        "required": true,
+        "default": "hourly",
+        "options": [
+          {
+            "value": "hourly",
+            "label": "计时收费"
+          },
+          {
+            "value": "contingency",
+            "label": "风险代理"
+          }
+        ]
+      },
+      {
+        "name": "hourlyRate",
+        "label": "小时费率",
+        "type": "money",
+        "unit": "元/小时",
+        "required": false
+      },
+      {
+        "name": "hours",
+        "label": "工作小时数",
+        "type": "number",
+        "unit": "小时",
+        "required": false
+      },
+      {
+        "name": "amount",
+        "label": "合同约定标的额",
+        "type": "money",
+        "unit": "元",
+        "required": false
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hourlyTotal",
+        "label": "计时收费总额",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "mode",
+                "value": "hourly"
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "hourlyRate"
+              },
+              "right": {
+                "op": "var",
+                "name": "hours"
+              }
+            },
+            "else": {
+              "op": "num",
+              "value": 0
+            }
+          }
+        },
+        "explain": "小时费率 × 工作小时数。计时收费标准由律所与委托人在政府指导价幅度内协商。"
+      },
+      {
+        "name": "contingencyCap",
+        "label": "风险代理收费上限",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "mode",
+                "value": "contingency"
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "amount"
+              },
+              "right": {
+                "op": "num",
+                "value": 0.3
+              }
+            },
+            "else": {
+              "op": "num",
+              "value": 0
+            }
+          }
+        },
+        "explain": "标的额 × 30%，《律师服务收费管理办法》第十三条的硬上限，约定高于此数的部分无效。"
+      }
+    ]
+  }
+}

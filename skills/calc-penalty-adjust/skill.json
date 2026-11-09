@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-penalty-adjust",
+  "name": "违约金调整参考",
+  "kind": "calculator",
+  "summary": "按损失 130% 的参考线看约定违约金是否可能被认定过高。",
+  "scene": [
+    "民商事"
+  ],
+  "lawRefs": [
+    "最高人民法院关于适用《中华人民共和国民法典》合同编通则若干问题的解释-0065",
+    "最高人民法院关于适用《中华人民共和国民法典》合同编通则若干问题的解释-0064"
+  ],
+  "body": {
+    "explain": "合同编通则解释第六十五条：约定的违约金超过造成损失的百分之三十的，人民法院一般可以认定为过分高于造成的损失。这是**一般可以**，不是必然——法院还要兼顾合同主体、交易类型、履行情况、过错程度等因素，所以这里算的是参考线不是判决结果。",
+    "inputs": [
+      {
+        "name": "loss",
+        "label": "违约造成的损失",
+        "type": "money",
+        "unit": "元",
+        "required": true
+      },
+      {
+        "name": "penalty",
+        "label": "约定违约金",
+        "type": "money",
+        "unit": "元",
+        "required": true
+      }
+    ],
+    "lets": [
+      {
+        "name": "line",
+        "label": "参考线（损失的 130%）",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "var",
+              "name": "loss"
+            },
+            "right": {
+              "op": "num",
+              "value": 1.3
+            }
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "name": "line",
+        "label": "过高参考线",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "var",
+            "name": "line"
+          }
+        },
+        "explain": "损失 × 130%。超过这条线的，一般可以主张过分高于损失。"
+      },
+      {
+        "name": "excess",
+        "label": "超出参考线金额",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "max",
+            "args": [
+              {
+                "op": "num",
+                "value": 0
+              },
+              {
+                "op": "sub",
+                "left": {
+                  "op": "var",
+                  "name": "penalty"
+                },
+                "right": {
+                  "op": "var",
+                  "name": "line"
+                }
+              }
+            ]
+          }
+        },
+        "explain": "约定违约金减参考线，不足为 0。减少到多少由法院衡量，第六十四条要求主张过高的一方承担举证责任。"
+      }
+    ]
+  }
+}

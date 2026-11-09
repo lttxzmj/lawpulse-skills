@@ -1,0 +1,6 @@
+# 本仓的脚本只用 Node 内置模块，正常情况下根本不该出现 node_modules。
+# 留这一条是防贡献者顺手 npm install 了什么东西就提上来。
+node_modules/
+
+.DS_Store
+*.log

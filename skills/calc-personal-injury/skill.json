@@ -1,0 +1,340 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-personal-injury",
+  "name": "人身损害赔偿计算",
+  "kind": "calculator",
+  "summary": "算残疾赔偿金、死亡赔偿金与丧葬费。",
+  "scene": [
+    "侵权",
+    "交通事故"
+  ],
+  "lawRefs": [
+    "最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释-0012",
+    "最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释-0014",
+    "最高人民法院关于审理人身损害赔偿案件适用法律若干问题的解释-0015"
+  ],
+  "body": {
+    "explain": "残疾赔偿金与死亡赔偿金按受诉法院所在地上一年度城镇居民人均可支配收入计二十年，六十周岁以上每增一岁减一年，七十五周岁以上按五年（第十二、十五条）；丧葬费按职工月平均工资六个月总额（第十四条）。**统计数据每年变、各省不同，由你填**。被扶养人生活费按第十七条另算，不在本计算器内。",
+    "inputs": [
+      {
+        "name": "type",
+        "label": "赔偿类型",
+        "type": "enum",
+        "required": true,
+        "options": [
+          {
+            "value": "disability",
+            "label": "伤残"
+          },
+          {
+            "value": "death",
+            "label": "死亡"
+          }
+        ]
+      },
+      {
+        "name": "income",
+        "label": "上一年度城镇居民人均可支配收入",
+        "type": "money",
+        "unit": "元/年",
+        "required": true,
+        "hint": "受诉法院所在地的政府统计数据"
+      },
+      {
+        "name": "age",
+        "label": "受害人年龄",
+        "type": "integer",
+        "unit": "岁",
+        "required": true
+      },
+      {
+        "name": "level",
+        "label": "伤残等级",
+        "type": "enum",
+        "required": false,
+        "default": "10",
+        "options": [
+          {
+            "value": "1",
+            "label": "一级"
+          },
+          {
+            "value": "2",
+            "label": "二级"
+          },
+          {
+            "value": "3",
+            "label": "三级"
+          },
+          {
+            "value": "4",
+            "label": "四级"
+          },
+          {
+            "value": "5",
+            "label": "五级"
+          },
+          {
+            "value": "6",
+            "label": "六级"
+          },
+          {
+            "value": "7",
+            "label": "七级"
+          },
+          {
+            "value": "8",
+            "label": "八级"
+          },
+          {
+            "value": "9",
+            "label": "九级"
+          },
+          {
+            "value": "10",
+            "label": "十级"
+          }
+        ],
+        "hint": "死亡的不用填"
+      },
+      {
+        "name": "monthlyWage",
+        "label": "职工月平均工资",
+        "type": "money",
+        "unit": "元/月",
+        "required": false,
+        "hint": "算丧葬费用，受诉法院所在地上一年度数据"
+      }
+    ],
+    "lets": [
+      {
+        "name": "years",
+        "label": "赔偿年限",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "cmp": "lte",
+              "left": {
+                "op": "var",
+                "name": "age"
+              },
+              "right": {
+                "op": "num",
+                "value": 60
+              }
+            },
+            "then": {
+              "op": "num",
+              "value": 20
+            },
+            "else": {
+              "op": "if",
+              "cond": {
+                "cmp": "gte",
+                "left": {
+                  "op": "var",
+                  "name": "age"
+                },
+                "right": {
+                  "op": "num",
+                  "value": 75
+                }
+              },
+              "then": {
+                "op": "num",
+                "value": 5
+              },
+              "else": {
+                "op": "sub",
+                "left": {
+                  "op": "num",
+                  "value": 20
+                },
+                "right": {
+                  "op": "sub",
+                  "left": {
+                    "op": "var",
+                    "name": "age"
+                  },
+                  "right": {
+                    "op": "num",
+                    "value": 60
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "coefficient",
+        "label": "伤残系数",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "table",
+            "key": {
+              "op": "var",
+              "name": "level"
+            },
+            "entries": [
+              {
+                "match": "1",
+                "value": 1
+              },
+              {
+                "match": "2",
+                "value": 0.9
+              },
+              {
+                "match": "3",
+                "value": 0.8
+              },
+              {
+                "match": "4",
+                "value": 0.7
+              },
+              {
+                "match": "5",
+                "value": 0.6
+              },
+              {
+                "match": "6",
+                "value": 0.5
+              },
+              {
+                "match": "7",
+                "value": 0.4
+              },
+              {
+                "match": "8",
+                "value": 0.3
+              },
+              {
+                "match": "9",
+                "value": 0.2
+              },
+              {
+                "match": "10",
+                "value": 0.1
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "name": "disabilityCompensation",
+        "label": "残疾赔偿金",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "type",
+                "value": "disability"
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "mul",
+                "left": {
+                  "op": "var",
+                  "name": "income"
+                },
+                "right": {
+                  "op": "var",
+                  "name": "years"
+                }
+              },
+              "right": {
+                "op": "var",
+                "name": "coefficient"
+              }
+            },
+            "else": {
+              "op": "num",
+              "value": 0
+            }
+          }
+        },
+        "explain": "人均可支配收入 × 赔偿年限 × 伤残系数。年限按第十二条算；伤残系数（一级 100%、每降一级减 10%）是审判通行折算方式而非法条原文，以判决为准。"
+      },
+      {
+        "name": "deathCompensation",
+        "label": "死亡赔偿金",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "type",
+                "value": "death"
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "income"
+              },
+              "right": {
+                "op": "var",
+                "name": "years"
+              }
+            },
+            "else": {
+              "op": "num",
+              "value": 0
+            }
+          }
+        },
+        "explain": "人均可支配收入 × 赔偿年限（第十五条，年限规则与残疾赔偿金相同）。"
+      },
+      {
+        "name": "funeralCost",
+        "label": "丧葬费",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "type",
+                "value": "death"
+              }
+            },
+            "then": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "monthlyWage"
+              },
+              "right": {
+                "op": "num",
+                "value": 6
+              }
+            },
+            "else": {
+              "op": "num",
+              "value": 0
+            }
+          }
+        },
+        "explain": "职工月平均工资 × 6 个月（第十四条）。"
+      }
+    ]
+  }
+}

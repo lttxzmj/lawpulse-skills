@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-execution-fee",
+  "name": "执行申请费计算",
+  "kind": "calculator",
+  "summary": "按执行金额算申请执行费，没有执行金额的为幅度收费。",
+  "scene": [
+    "执行"
+  ],
+  "lawRefs": [
+    "诉讼费用交纳办法-0014"
+  ],
+  "body": {
+    "explain": "《诉讼费用交纳办法》第十四条第（一）项第 2 目：不超过 1 万元的每件 50 元；1 万至 50 万按 1.5%；50 万至 500 万按 1%；500 万至 1000 万按 0.5%；超过 1000 万按 0.1%。没有执行金额或价额的，每件 50 元至 500 元（幅度收费，本计算器不猜）。",
+    "inputs": [
+      {
+        "name": "amount",
+        "label": "执行金额或价额",
+        "type": "money",
+        "unit": "元",
+        "required": true
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fee",
+        "label": "申请执行费",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "bracket",
+            "value": {
+              "op": "var",
+              "name": "amount"
+            },
+            "base": 50,
+            "tiers": [
+              {
+                "upTo": 10000,
+                "rate": 0
+              },
+              {
+                "upTo": 500000,
+                "rate": 0.015
+              },
+              {
+                "upTo": 5000000,
+                "rate": 0.01
+              },
+              {
+                "upTo": 10000000,
+                "rate": 0.005
+              },
+              {
+                "upTo": null,
+                "rate": 0.001
+              }
+            ]
+          }
+        },
+        "explain": "按执行金额分段累计，1 万元以内每件 50 元。"
+      }
+    ]
+  }
+}

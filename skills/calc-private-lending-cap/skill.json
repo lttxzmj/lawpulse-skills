@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-private-lending-cap",
+  "name": "民间借贷利率上限",
+  "kind": "calculator",
+  "summary": "按合同成立时一年期 LPR 四倍算受保护的利息上限。",
+  "scene": [
+    "民商事"
+  ],
+  "lawRefs": [
+    "最高人民法院关于审理民间借贷案件适用法律若干问题的规定-0025",
+    "最高人民法院关于审理民间借贷案件适用法律若干问题的规定-0028"
+  ],
+  "body": {
+    "explain": "第二十五条：约定利率超过合同成立时一年期 LPR 四倍的部分不受保护。第二十八条：逾期利率同样以四倍为限。注意用的是**合同成立时**的 LPR，不是起诉时的。",
+    "inputs": [
+      {
+        "name": "principal",
+        "label": "本金",
+        "type": "money",
+        "unit": "元",
+        "required": true
+      },
+      {
+        "name": "lpr",
+        "label": "合同成立时一年期 LPR",
+        "type": "percent",
+        "unit": "%",
+        "required": true,
+        "hint": "如 3.1"
+      },
+      {
+        "name": "agreedRate",
+        "label": "约定年利率",
+        "type": "percent",
+        "unit": "%",
+        "required": true
+      },
+      {
+        "name": "days",
+        "label": "计息天数",
+        "type": "integer",
+        "unit": "天",
+        "required": true
+      }
+    ],
+    "lets": [
+      {
+        "name": "cap",
+        "label": "受保护年利率上限",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "var",
+              "name": "lpr"
+            },
+            "right": {
+              "op": "num",
+              "value": 4
+            }
+          }
+        }
+      },
+      {
+        "name": "protectedRate",
+        "label": "实际受保护年利率",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "min",
+            "args": [
+              {
+                "op": "var",
+                "name": "agreedRate"
+              },
+              {
+                "op": "var",
+                "name": "cap"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "name": "cap",
+        "label": "受保护年利率上限",
+        "unit": "%",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "var",
+            "name": "cap"
+          }
+        },
+        "explain": "合同成立时一年期 LPR 的四倍（第二十五条）。"
+      },
+      {
+        "name": "protectedInterest",
+        "label": "受保护利息",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "principal"
+              },
+              "right": {
+                "op": "div",
+                "left": {
+                  "op": "var",
+                  "name": "protectedRate"
+                },
+                "right": {
+                  "op": "num",
+                  "value": 100
+                }
+              }
+            },
+            "right": {
+              "op": "div",
+              "left": {
+                "op": "var",
+                "name": "days"
+              },
+              "right": {
+                "op": "num",
+                "value": 365
+              }
+            }
+          }
+        },
+        "explain": "按约定利率与四倍上限中较低者计算的利息。"
+      },
+      {
+        "name": "excessInterest",
+        "label": "超出部分（不受保护）",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "mul",
+              "left": {
+                "op": "var",
+                "name": "principal"
+              },
+              "right": {
+                "op": "div",
+                "left": {
+                  "op": "sub",
+                  "left": {
+                    "op": "var",
+                    "name": "agreedRate"
+                  },
+                  "right": {
+                    "op": "var",
+                    "name": "protectedRate"
+                  }
+                },
+                "right": {
+                  "op": "num",
+                  "value": 100
+                }
+              }
+            },
+            "right": {
+              "op": "div",
+              "left": {
+                "op": "var",
+                "name": "days"
+              },
+              "right": {
+                "op": "num",
+                "value": 365
+              }
+            }
+          }
+        },
+        "explain": "约定利率高出四倍上限的那部分对应的利息，法院不予支持。"
+      }
+    ]
+  }
+}

@@ -1,0 +1,342 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-court-fee",
+  "name": "诉讼费计算",
+  "kind": "calculator",
+  "summary": "按《诉讼费用交纳办法》算案件受理费，含财产、离婚、劳动争议。",
+  "scene": [
+    "民商事",
+    "婚姻家庭",
+    "劳动"
+  ],
+  "lawRefs": [
+    "诉讼费用交纳办法-0013",
+    "诉讼费用交纳办法-0015",
+    "诉讼费用交纳办法-0016"
+  ],
+  "body": {
+    "explain": "案件受理费按《诉讼费用交纳办法》第十三条分段累计。调解、撤诉与适用简易程序各自减半（第十五、十六条），实务中不重复减半，这里按减半一次计。",
+    "inputs": [
+      {
+        "name": "caseType",
+        "label": "案件类型",
+        "type": "enum",
+        "required": true,
+        "options": [
+          {
+            "value": "property",
+            "label": "财产案件"
+          },
+          {
+            "value": "divorce",
+            "label": "离婚案件"
+          },
+          {
+            "value": "labor",
+            "label": "劳动争议"
+          },
+          {
+            "value": "ip",
+            "label": "知识产权"
+          },
+          {
+            "value": "other",
+            "label": "其他非财产案件"
+          }
+        ]
+      },
+      {
+        "name": "amount",
+        "label": "诉讼请求金额",
+        "type": "money",
+        "unit": "元",
+        "required": false,
+        "hint": "离婚案件填需要分割的财产总额；非财产案件留空"
+      },
+      {
+        "name": "pieceFee",
+        "label": "非财产案件件数费",
+        "type": "money",
+        "unit": "元",
+        "required": false,
+        "default": 300,
+        "hint": "法条给的是幅度，由各省在幅度内定：离婚 50–300、其他人格权 100–500、其他非财产 50–100、知识产权无争议金额 500–1000。财产案件不用填"
+      },
+      {
+        "name": "closing",
+        "label": "结案方式",
+        "type": "enum",
+        "required": true,
+        "default": "normal",
+        "options": [
+          {
+            "value": "normal",
+            "label": "普通程序判决"
+          },
+          {
+            "value": "simple",
+            "label": "简易程序"
+          },
+          {
+            "value": "settled",
+            "label": "调解或撤诉"
+          }
+        ]
+      }
+    ],
+    "lets": [
+      {
+        "name": "baseFee",
+        "label": "减半前受理费",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "if",
+            "cond": {
+              "match": {
+                "name": "caseType",
+                "value": "property"
+              }
+            },
+            "then": {
+              "op": "bracket",
+              "value": {
+                "op": "var",
+                "name": "amount"
+              },
+              "base": 50,
+              "tiers": [
+                {
+                  "upTo": 10000,
+                  "rate": 0
+                },
+                {
+                  "upTo": 100000,
+                  "rate": 0.025
+                },
+                {
+                  "upTo": 200000,
+                  "rate": 0.02
+                },
+                {
+                  "upTo": 500000,
+                  "rate": 0.015
+                },
+                {
+                  "upTo": 1000000,
+                  "rate": 0.01
+                },
+                {
+                  "upTo": 2000000,
+                  "rate": 0.009
+                },
+                {
+                  "upTo": 5000000,
+                  "rate": 0.008
+                },
+                {
+                  "upTo": 10000000,
+                  "rate": 0.007
+                },
+                {
+                  "upTo": 20000000,
+                  "rate": 0.006
+                },
+                {
+                  "upTo": null,
+                  "rate": 0.005
+                }
+              ]
+            },
+            "else": {
+              "op": "if",
+              "cond": {
+                "match": {
+                  "name": "caseType",
+                  "value": "divorce"
+                }
+              },
+              "then": {
+                "op": "add",
+                "left": {
+                  "op": "var",
+                  "name": "pieceFee"
+                },
+                "right": {
+                  "op": "if",
+                  "cond": {
+                    "cmp": "gt",
+                    "left": {
+                      "op": "var",
+                      "name": "amount"
+                    },
+                    "right": {
+                      "op": "num",
+                      "value": 200000
+                    }
+                  },
+                  "then": {
+                    "op": "mul",
+                    "left": {
+                      "op": "sub",
+                      "left": {
+                        "op": "var",
+                        "name": "amount"
+                      },
+                      "right": {
+                        "op": "num",
+                        "value": 200000
+                      }
+                    },
+                    "right": {
+                      "op": "num",
+                      "value": 0.005
+                    }
+                  },
+                  "else": {
+                    "op": "num",
+                    "value": 0
+                  }
+                }
+              },
+              "else": {
+                "op": "if",
+                "cond": {
+                  "match": {
+                    "name": "caseType",
+                    "value": "labor"
+                  }
+                },
+                "then": {
+                  "op": "num",
+                  "value": 10
+                },
+                "else": {
+                  "op": "if",
+                  "cond": {
+                    "cmp": "gt",
+                    "left": {
+                      "op": "var",
+                      "name": "amount"
+                    },
+                    "right": {
+                      "op": "num",
+                      "value": 0
+                    }
+                  },
+                  "then": {
+                    "op": "bracket",
+                    "value": {
+                      "op": "var",
+                      "name": "amount"
+                    },
+                    "base": 50,
+                    "tiers": [
+                      {
+                        "upTo": 10000,
+                        "rate": 0
+                      },
+                      {
+                        "upTo": 100000,
+                        "rate": 0.025
+                      },
+                      {
+                        "upTo": 200000,
+                        "rate": 0.02
+                      },
+                      {
+                        "upTo": 500000,
+                        "rate": 0.015
+                      },
+                      {
+                        "upTo": 1000000,
+                        "rate": 0.01
+                      },
+                      {
+                        "upTo": 2000000,
+                        "rate": 0.009
+                      },
+                      {
+                        "upTo": 5000000,
+                        "rate": 0.008
+                      },
+                      {
+                        "upTo": 10000000,
+                        "rate": 0.007
+                      },
+                      {
+                        "upTo": 20000000,
+                        "rate": 0.006
+                      },
+                      {
+                        "upTo": null,
+                        "rate": 0.005
+                      }
+                    ]
+                  },
+                  "else": {
+                    "op": "var",
+                    "name": "pieceFee"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      {
+        "name": "discount",
+        "label": "减半系数",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "table",
+            "key": {
+              "op": "var",
+              "name": "closing"
+            },
+            "entries": [
+              {
+                "match": "normal",
+                "value": 1
+              },
+              {
+                "match": "simple",
+                "value": 0.5
+              },
+              {
+                "match": "settled",
+                "value": 0.5
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fee",
+        "label": "案件受理费",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "mul",
+            "left": {
+              "op": "var",
+              "name": "baseFee"
+            },
+            "right": {
+              "op": "var",
+              "name": "discount"
+            }
+          }
+        },
+        "explain": "财产案件按第十三条第（一）项分段累计：1 万元以内每件 50 元，超出部分按所在档位比例逐段相加。简易程序、调解或撤诉的减半（第十五、十六条）。"
+      }
+    ]
+  }
+}

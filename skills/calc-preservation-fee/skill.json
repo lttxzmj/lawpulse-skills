@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "author": "official",
+  "license": "CC-BY-4.0",
+  "id": "calc-preservation-fee",
+  "name": "保全费计算",
+  "kind": "calculator",
+  "summary": "按实际保全财产数额算申请费，封顶 5000 元。",
+  "scene": [
+    "民商事"
+  ],
+  "lawRefs": [
+    "诉讼费用交纳办法-0014"
+  ],
+  "body": {
+    "explain": "《诉讼费用交纳办法》第十四条第（二）项：不超过 1000 元或不涉及财产数额的每件 30 元；1000 元至 10 万元的部分按 1%；超过 10 万元的部分按 0.5%；总额最多不超过 5000 元。",
+    "inputs": [
+      {
+        "name": "amount",
+        "label": "实际保全财产数额",
+        "type": "money",
+        "unit": "元",
+        "required": true,
+        "hint": "不涉及财产数额的填 0，按每件 30 元计"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "fee",
+        "label": "保全申请费",
+        "unit": "元",
+        "formula": {
+          "kind": "expr",
+          "ast": {
+            "op": "min",
+            "args": [
+              {
+                "op": "bracket",
+                "value": {
+                  "op": "var",
+                  "name": "amount"
+                },
+                "base": 30,
+                "tiers": [
+                  {
+                    "upTo": 1000,
+                    "rate": 0
+                  },
+                  {
+                    "upTo": 100000,
+                    "rate": 0.01
+                  },
+                  {
+                    "upTo": null,
+                    "rate": 0.005
+                  }
+                ]
+              },
+              {
+                "op": "num",
+                "value": 5000
+              }
+            ]
+          }
+        },
+        "explain": "按实际保全数额分段累计后与 5000 元取小者——第十四条第（二）项的封顶是硬上限。"
+      }
+    ]
+  }
+}
