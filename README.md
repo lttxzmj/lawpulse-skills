@@ -6,6 +6,10 @@
 也不能执行代码。计算器的公式走白名单解释器，只认加减乘除、分段累计、查表、条件判断
 这几种节点——所以你可以放心装一个陌生人写的诉讼费计算器。
 
+> 本仓是**法脉桌面端应用内**技能（skill.json 格式，应用里导入）。
+> 要给 Claude Code / Codex 等 AI agent 用的中国法技能，在另一个仓：
+> [chinese-law-skills](https://github.com/lttxzmj/chinese-law-skills)（SKILL.md 开放格式，含法条引用核验、合同审查、诉讼计算器等 13 个）。
+
 ## 技能清单
 
 <!-- SKILLS:START -->
